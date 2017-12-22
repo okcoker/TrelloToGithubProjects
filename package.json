@@ -1,0 +1,23 @@
+{
+  "name": "trello-to-projects",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "4.0.0",
+    "github": "13.0.1",
+    "node-trello": "1.3.0",
+    "request": "2.83.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "8.0.3",
+    "eslint": "4.13.1",
+    "eslint-plugin-import": "2.8.0",
+    "eslint-plugin-promise": "3.6.0"
+  }
+}
