@@ -1,0 +1,27 @@
+.u-text-center {
+    text-align: center;
+}
+
+.u-text-right {
+    text-align: right;
+}
+
+.u-text-error {
+    color: var(--red);
+}
+
+.u-block {
+    display: block;
+}
+
+.u-left-right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.u-zebra {
+    & > :nth-child(odd) {
+        background: var(--gray8);
+    }
+}

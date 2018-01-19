@@ -1,0 +1,52 @@
+@import 'lib/normalize';
+@import 'variables';
+@import 'base';
+@import 'utils';
+@import 'forms';
+@import 'button';
+@import 'loader';
+@import 'auth';
+
+/* stylelint-disable */
+#__next,
+#__next > div,
+/* stylelint-enable */
+.root,
+.root > div {
+    height: 100%;
+}
+
+.logo-container {
+    text-align: center;
+    margin-top: 16px;
+
+    img {
+        max-width: 100px;
+        margin: 0 auto;
+    }
+
+    p {
+        margin-top: 0;
+    }
+}
+
+.page-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.main-section {
+    margin-top: 48px;
+}
+
+.list-row {
+    padding: 12px 0;
+
+    .select {
+        margin: 0 12px 0;
+    }
+}
+
+.table-header {
+    color: var(--gray7);
+}

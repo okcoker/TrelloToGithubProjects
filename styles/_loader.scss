@@ -1,0 +1,46 @@
+$animationLength: 1s;
+$animationRadius: 12px;
+$columnWidth: 4px;
+$columnHeight: 8px;
+$columnColor: #0079c0;
+
+@keyframes jump {
+    0,
+    100% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(0.5);
+    }
+}
+
+.loader-container {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.loader {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    height: 1em;
+    width: 1em;
+    margin: 0 auto;
+}
+
+.column {
+    width: 30%;
+    height: 100%;
+    background: $columnColor;
+    border-radius: 3px;
+    margin-right: 10%;
+    animation: jump $animationLength ease infinite;
+    transform-origin: top left;
+
+    &:last-child {
+        animation: jump $animationLength ease infinite 0.1s;
+        margin: 0;
+        height: 66%;
+    }
+}

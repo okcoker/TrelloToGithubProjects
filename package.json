@@ -1,23 +1,76 @@
 {
-  "name": "trello-to-projects",
+  "name": "trellotogithubprojects",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server/index.js",
   "scripts": {
+    "precommit": "lint-staged",
+    "dev": "NODE_ENV=development nodemon --inspect -w server server/index.js",
+    "build": "next build",
+    "start": "npm run build && NODE_ENV=production node server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "lint-staged": {
+    "*.js": "eslint",
+    "*.scss": "stylelint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/okcoker/TrelloToGithubProjects.git"
+  },
+  "bugs": {
+    "url": "https://github.com/okcoker/TrelloToGithubProjects/issues"
+  },
+  "author": "Sean Coker <hello@sean.is>",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "4.0.0",
-    "github": "13.0.1",
-    "node-trello": "1.3.0",
-    "request": "2.83.0"
-  },
-  "devDependencies": {
+    "autoprefixer": "7.2.5",
+    "babel-core": "6.26.0",
     "babel-eslint": "8.0.3",
+    "babel-loader": "7.1.2",
+    "babel-plugin-styled-components": "1.4.0",
+    "babel-preset-env": "1.6.1",
+    "babel-preset-stage-0": "6.24.1",
+    "body-parser": "1.18.2",
+    "classnames": "2.2.5",
+    "cookie-parser": "1.4.3",
+    "cssnano": "3.10.0",
+    "dotenv": "4.0.0",
     "eslint": "4.13.1",
     "eslint-plugin-import": "2.8.0",
-    "eslint-plugin-promise": "3.6.0"
+    "eslint-plugin-promise": "3.6.0",
+    "eslint-plugin-react": "7.5.1",
+    "express": "4.16.2",
+    "express-https-redirect": "1.0.0",
+    "github": "13.0.1",
+    "helmet": "3.9.0",
+    "hpp": "0.2.2",
+    "isomorphic-fetch": "2.2.1",
+    "js-cookie": "2.2.0",
+    "next": "4.2.3",
+    "next-redux-wrapper": "1.3.5",
+    "node-sass": "4.7.2",
+    "node-trello": "1.3.0",
+    "postcss-easy-import": "3.0.0",
+    "postcss-loader": "2.0.10",
+    "raw-loader": "0.5.1",
+    "react": "16.2.0",
+    "react-dom": "16.2.0",
+    "react-redux": "5.0.6",
+    "redux": "3.7.2",
+    "redux-logger": "3.0.6",
+    "redux-thunk": "2.2.0",
+    "sass-loader": "6.0.6",
+    "serve-favicon": "2.4.5",
+    "styled-components": "2.4.0",
+    "stylelint": "8.4.0",
+    "stylelint-config-standard": "18.0.0",
+    "stylelint-scss": "2.2.0"
+  },
+  "devDependencies": {
+    "husky": "0.14.3",
+    "ip": "1.1.5",
+    "lint-staged": "6.0.1",
+    "nodemon": "1.14.11"
   }
 }

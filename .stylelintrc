@@ -1,0 +1,22 @@
+{
+    "extends": "stylelint-config-standard",
+    "ignoreFiles": "styles/lib/**/*.scss",
+    "plugins": [
+        "stylelint-scss"
+    ],
+    "rules": {
+        "at-rule-no-unknown": null,
+        "indentation": 4,
+        "max-empty-lines": 3,
+        "number-max-precision": 3,
+        "selector-pseudo-element-colon-notation": "single",
+        "value-no-vendor-prefix": true,
+        "property-no-vendor-prefix": true,
+        "selector-no-vendor-prefix": true,
+        "declaration-empty-line-before": null,
+        "at-rule-empty-line-before": null,
+        "selector-max-specificity": "0,3,2",
+
+        "scss/at-rule-no-unknown": true
+    }
+}

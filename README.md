@@ -1,7 +1,5 @@
+<p align="center"><img src="https://user-images.githubusercontent.com/1030830/35190887-c6fa76aa-fe3a-11e7-8665-200be1c77c36.png" /></p>
+
 # Trello to Projects
 
-This is a quick and dirty script to migrate from Trello to Github Projects (under an organization)
-
-To use, rename `.env.sample` to `.env` and fill in your appropriate keys
-
-Then run `node index.js`. This requires about [node 7ish](http://node.green)? Otherwise use babel-node.
+This is a small app that will help you migrate your Trello board into a GitHub project.

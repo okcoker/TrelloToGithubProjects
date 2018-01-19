@@ -1,0 +1,36 @@
+.button,
+button {
+    background: var(--blue);
+    color: #fff;
+    border: 0;
+    padding: 10px 15px;
+    cursor: pointer;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    transition: transform 0.15s ease-out, background 0.15s ease-out;
+    border-radius: 7px;
+
+    &:hover,
+    &:focus {
+        transition: transform 0.15s ease-in, background 0.15s ease-in;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        background: var(--light-blue);
+    }
+
+    &:active {
+        transform: translateY(2px);
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+        background: var(--blue);
+    }
+
+    &[disabled],
+    &[disabled]:hover,
+    &[disabled]:focus,
+    &[disabled]:active {
+        cursor: default;
+        transform: translateY(0);
+        background: var(--gray8);
+        color: var(--gray9);
+        box-shadow: none;
+    }
+}

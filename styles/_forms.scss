@@ -1,0 +1,53 @@
+.input,
+[type="text"],
+[type="date"],
+[role="combobox"],
+[type="url"],
+[type="number"],
+[type="email"],
+[type="password"],
+select {
+    line-height: 42px;
+}
+
+.input,
+[role="combobox"],
+[type="text"],
+[type="date"],
+[type="number"],
+[type="url"],
+[type="email"],
+[type="password"],
+select,
+textarea {
+    padding: 0 12px;
+    width: 100%;
+    margin-bottom: 1em;
+    border: 1px solid var(--gray9);
+    height: 42px;
+    background: #fff;
+    border-radius: 3px;
+}
+
+textarea {
+    padding: 12px;
+}
+
+[type="checkbox"],
+[type="radio"] {
+    vertical-align: top;
+    margin: 0 0.5em 0;
+    position: relative;
+    cursor: pointer;
+}
+
+[type="checkbox"] {
+    border-radius: 3px;
+}
+
+label {
+    input,
+    & + input {
+        margin-top: 0.25em;
+    }
+}
