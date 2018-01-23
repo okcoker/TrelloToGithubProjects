@@ -177,12 +177,44 @@ export default async function handler(req, res, next) {
         const key = (req.body.key || trelloKey || '').trim();
         const secret = (req.body.secret || trelloSecret || '').trim();
         const token = (req.body.token || req.cookies.githubToken || '').trim();
-        const trello = new Trello(key, secret);
 
-        github.authenticate({
-            type: 'token',
-            token
-        });
+        let trello = {};
+
+        // The following 2 try/catch blocks are only needed for first
+        // initialization of the app. Maybe it'd be better if we combined
+        // the verify call into one.
+        try {
+            // Dont let empty trello creds fail github
+            trello = new Trello(key, secret);
+
+            if (!req.cookies.trelloSecret && !req.cookies.trelloKey) {
+                res.cookie('trelloSecret', secret, {
+                    path: '/',
+                    secure: process.env.NODE_ENV === 'production'
+                });
+                res.cookie('trelloKey', key, {
+                    path: '/',
+                    secure: process.env.NODE_ENV === 'production'
+                });
+            }
+        }
+        catch (err) {} //eslint-disable-line
+
+        try {
+            // Don't let github fail trello requests
+            github.authenticate({
+                type: 'token',
+                token
+            });
+
+            if (!req.cookies.githubToken) {
+                res.cookie('githubToken', token, {
+                    path: '/',
+                    secure: process.env.NODE_ENV === 'production'
+                });
+            }
+        }
+        catch (err) {} // eslint-disable-line
 
         switch (action) {
             case 'verifyGithub': {
