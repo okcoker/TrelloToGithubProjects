@@ -1,5 +1,6 @@
 import { request } from '../../utils/index';
 import { requestSuffix, failSuffix } from '../utils/index';
+import { CREATE_ISSUE_FROM_CARD_ID } from './github';
 
 const PREFIX = 'ttp/trello/';
 const SET_KEY = `${PREFIX}SET_KEY`;
@@ -12,6 +13,8 @@ const SET_LIST_CHECK_STATE = `${PREFIX}SET_LIST_CHECK_STATE`;
 const RESET_LIST_DESTINATION_NAMES = `${PREFIX}RESET_LIST_DESTINATION_NAMES`;
 const SET_LIST_DESTINATION_NAME_INDEX = `${PREFIX}SET_LIST_DESTINATION_NAME_INDEX`;
 const ADD_NEW_DESTINATION_LIST = `${PREFIX}ADD_NEW_DESTINATION_LIST`;
+const GET_CARDS = `${PREFIX}GET_CARDS`;
+const GET_CARD_MARKDOWN = `${PREFIX}GET_CARD_MARKDOWN`;
 
 // May eventuall split these reducers up
 const defaultState = {
@@ -32,7 +35,14 @@ const defaultState = {
     isListsLoading: false,
     hasListError: false,
     lists: [],
-    destinationListNames: []
+    destinationListNames: [],
+
+    // Cards
+    isCardsLoading: false,
+    hasCardError: false,
+    cards: [],
+
+    isMarkdownLoading: false
 };
 
 export default function reducer(state = defaultState, action) {
@@ -189,6 +199,122 @@ export default function reducer(state = defaultState, action) {
             };
         }
 
+        case requestSuffix(GET_CARDS):
+            return {
+                ...state,
+                isCardsLoading: true,
+                hasCardError: false
+            };
+
+        case failSuffix(GET_CARDS):
+            return {
+                ...state,
+                isCardsLoading: false,
+                hasCardError: true
+            };
+
+        case GET_CARDS: {
+            return {
+                ...state,
+                cards: action.resolved,
+                isCardsLoading: false
+            };
+        }
+
+        case requestSuffix(GET_CARD_MARKDOWN):
+            return {
+                ...state,
+                cards: state.cards.map((card) => {
+                    if (card.id === action.cardId) {
+                        return {
+                            ...card,
+                            isMarkdownLoading: true
+                        };
+                    }
+
+                    return card;
+                })
+            };
+
+        case failSuffix(GET_CARD_MARKDOWN):
+            return {
+                ...state,
+                cards: state.cards.map((card) => {
+                    if (card.id === action.cardId) {
+                        return {
+                            ...card,
+                            isMarkdownLoading: false
+                        };
+                    }
+
+                    return card;
+                })
+            };
+
+        case GET_CARD_MARKDOWN: {
+            return {
+                ...state,
+                cards: state.cards.map((card) => {
+                    if (card.id === action.cardId) {
+                        return {
+                            ...card,
+                            isMarkdownLoading: false,
+                            markdown: action.resolved.markdown
+                        };
+                    }
+
+                    return card;
+                })
+            };
+        }
+
+        case requestSuffix(CREATE_ISSUE_FROM_CARD_ID):
+            return {
+                ...state,
+                cards: state.cards.map((card) => {
+                    if (card.id === action.cardId) {
+                        return {
+                            ...card,
+                            isCreatingIssue: true
+                        };
+                    }
+
+                    return card;
+                })
+            };
+
+        case failSuffix(CREATE_ISSUE_FROM_CARD_ID):
+            return {
+                ...state,
+                cards: state.cards.map((card) => {
+                    if (card.id === action.cardId) {
+                        return {
+                            ...card,
+                            isCreatingIssue: false
+                        };
+                    }
+
+                    return card;
+                })
+            };
+
+        case CREATE_ISSUE_FROM_CARD_ID: {
+            return {
+                ...state,
+                cards: state.cards.map((card) => {
+                    if (card.id === action.cardId) {
+                        return {
+                            ...card,
+                            isCreatingIssue: false,
+                            issue: action.resolved.data
+                        };
+                    }
+
+                    return card;
+                })
+            };
+        }
+
         default:
             return state;
     }
@@ -268,5 +394,20 @@ export function addNewDestinationList(name) {
     return {
         type: ADD_NEW_DESTINATION_LIST,
         name
+    };
+}
+
+export function getCards(boardId) {
+    return {
+        type: GET_CARDS,
+        promise: request(`/api/cards?boardId=${boardId}`)
+    };
+}
+
+export function getMarkdownForCard(cardId) {
+    return {
+        type: GET_CARD_MARKDOWN,
+        cardId,
+        promise: request(`/api/markdown?cardId=${cardId}`)
     };
 }

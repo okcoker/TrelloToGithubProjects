@@ -10,6 +10,10 @@ const GET_PROJECTS = `${PREFIX}GET_PROJECTS`;
 const SET_PROJECT_ID = `${PREFIX}SET_PROJECT_ID`;
 const ADD_NEW_PROJECT = `${PREFIX}ADD_NEW_PROJECT`;
 const PERFORM_MIGRATION = `${PREFIX}PERFORM_MIGRATION`;
+const GET_REPOS = `${PREFIX}GET_REPOS`;
+const SET_REPO_ID = `${PREFIX}SET_REPO_ID`;
+
+export const CREATE_ISSUE_FROM_CARD_ID = `${PREFIX}CREATE_ISSUE_FROM_CARD_ID`;
 
 // May eventuall split these reducers up
 const defaultState = {
@@ -30,6 +34,12 @@ const defaultState = {
     hasProjectError: false,
     currentProjectId: '',
     projects: [],
+
+    // Repos
+    isReposLoading: false,
+    hasRepoError: false,
+    currentRepoId: '',
+    repos: [],
 
     // Migration
     isMigrating: false
@@ -161,6 +171,44 @@ export default function reducer(state = defaultState, action) {
             };
         }
 
+        case requestSuffix(GET_REPOS):
+            return {
+                ...state,
+                isReposLoading: true,
+                hasRepoError: false
+            };
+
+        case failSuffix(GET_REPOS):
+            return {
+                ...state,
+                isReposLoading: false,
+                hasRepoError: true
+            };
+
+        case GET_REPOS: {
+            const repos = action.resolved.data.sort((x, y) => {
+                return x.full_name.localeCompare(y.full_name);
+            });
+            let currentRepoId = state.currentRepoId;
+
+            if (!currentRepoId) {
+                currentRepoId = repos[0].id;
+            }
+
+            return {
+                ...state,
+                repos,
+                isReposLoading: false,
+                currentRepoId
+            };
+        }
+
+        case SET_REPO_ID:
+            return {
+                ...state,
+                currentRepoId: action.repoId
+            };
+
         default:
             return state;
     }
@@ -206,6 +254,20 @@ export function getProjects(org) {
     };
 }
 
+export function getRepos() {
+    return {
+        type: GET_REPOS,
+        promise: request('/api/repos')
+    };
+}
+
+export function setRepoId(repoId) {
+    return {
+        type: SET_REPO_ID,
+        repoId: parseInt(repoId, 10)
+    };
+}
+
 export function setProjectId(projectId) {
     return {
         type: SET_PROJECT_ID,
@@ -217,6 +279,20 @@ export function addNewProject(name) {
     return {
         type: ADD_NEW_PROJECT,
         name
+    };
+}
+
+export function createIssueFromCardId(cardId, owner, name) {
+    return {
+        type: CREATE_ISSUE_FROM_CARD_ID,
+        promise: request('/api/createIssue', {
+            method: 'POST',
+            body: {
+                cardId,
+                owner,
+                name
+            }
+        })
     };
 }
 

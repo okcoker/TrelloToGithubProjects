@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -7,6 +7,7 @@ import { getOrganizations, setOrganizationId, getProjects, setProjectId, addNewP
 
 import Select from './Select';
 import Loader from './Loader';
+import CardConverterContainer from './CardConverterContainer';
 
 class MainContainer extends Component {
     static propTypes = {
@@ -19,7 +20,8 @@ class MainContainer extends Component {
         super(props);
 
         this.state = {
-            keepColumnNames: true
+            keepColumnNames: true,
+            showCardConverter: false
         };
     }
 
@@ -187,6 +189,12 @@ class MainContainer extends Component {
         });
     }
 
+    handleCardConverterToggle = () => {
+        this.setState({
+            showCardConverter: !this.state.showCardConverter
+        });
+    }
+
     ////////////////////
     // Helper methods //
     ////////////////////
@@ -221,13 +229,16 @@ class MainContainer extends Component {
         const { trello } = this.props;
         const trelloSelectProps = {
             name: 'board',
-            value: trello.currentBoard,
+            value: trello.currentBoardId,
             onChange: this.handleSelectChange,
             disabled: trello.isBoardsLoading,
             options: trello.boards.map(({ name, id }) => {
                 return { text: name, value: id };
             })
         };
+        const currentBoardName = (trello.boards.find((board) => {
+            return board.id === trello.currentBoardId;
+        }) || {}).name;
 
         if (trello.isBoardsLoading) {
             trelloSelectProps.options = [{ text: 'Loading…', value: '' }];
@@ -235,7 +246,10 @@ class MainContainer extends Component {
 
         return (
             <section className="main-section">
-                <h4>Choose a Trello board</h4>
+                <div className="u-left-right">
+                    <h4>Choose a Trello board</h4>
+                    <button onClick={this.handleCardConverterToggle}>trello-card-to-github-issue converter for {currentBoardName}</button>
+                </div>
                 <Select {...trelloSelectProps} />
             </section>
         );
@@ -408,7 +422,7 @@ class MainContainer extends Component {
         );
     }
 
-    render() {
+    renderContent() {
         const { github } = this.props;
         let submitText = 'Migrate';
 
@@ -416,8 +430,16 @@ class MainContainer extends Component {
             submitText = 'Migrating…';
         }
 
+        if (this.state.showCardConverter) {
+            return (
+                <CardConverterContainer
+                    onExitClick={this.handleCardConverterToggle}
+                />
+            );
+        }
+
         return (
-            <form className="page-content" onSubmit={this.handleMigrationFormSubmit}>
+            <Fragment>
                 {this.renderTrelloBoardSection()}
                 {this.renderTrelloBoardLists()}
                 {this.renderGithubDestination()}
@@ -431,6 +453,14 @@ class MainContainer extends Component {
                         disabled={github.isMigrating}
                     />
                 </div>
+            </Fragment>
+        );
+    }
+
+    render() {
+        return (
+            <form className="page-content" onSubmit={this.handleMigrationFormSubmit}>
+                {this.renderContent()}
             </form>
         );
     }

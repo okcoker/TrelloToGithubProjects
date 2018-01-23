@@ -46,11 +46,56 @@ function getAllCards(trello, boardId) {
     });
 }
 
+function getCard(trello, cardId) {
+    return new Promise((resolve, reject) => {
+        const options = {
+            attachments: 'true',
+            checkItemStates: 'true',
+            checklists: 'all'
+        };
+
+        trello.get(`/1/cards/${cardId}`, options, (err, data) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            resolve(data);
+        });
+    });
+}
+
+function getCardActions(trello, cardId) {
+    return new Promise((resolve, reject) => {
+        const options = {
+            filter: 'commentCard'
+        };
+
+        trello.get(`/1/cards/${cardId}/actions`, options, (err, data) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            resolve(data);
+        });
+    });
+}
+
 function createOrgProject(organizationName, projectName) {
     return github.projects.createOrgProject({
         org: organizationName,
         name: projectName
     });
+}
+
+function transcriptFromActions(actions) {
+    return Array.from(actions).reverse().map((action) => {
+        return `**${action.memberCreator.fullName}**
+
+> ${action.data.text}
+`;
+    }).join('\n');
 }
 
 function getCheckboxMarkdown(text, completed = false) {
@@ -61,7 +106,7 @@ function getImageMarkdown(src, text = '') {
     return `![${text || src}](${src})`;
 }
 
-function createNoteBodyFromTrelloCard(card) {
+function createNoteBodyFromTrelloCard(card, { excludeTitle = false } = {}) {
     const attachments = card.attachments.map((obj) => {
         return getImageMarkdown(obj.url);
     }).join('\n');
@@ -77,7 +122,13 @@ ${checkboxes}
 `;
     }).join('\n');
 
-    return [card.name, attachments, checklists].filter(Boolean).join('\n');
+    const parts = [attachments, checklists];
+
+    if (!excludeTitle) {
+        parts.unshift(card.name);
+    }
+
+    return parts.filter(Boolean).join('\n');
 }
 
 function getProjectInfo(listInfo, listIdToCardsMap) {
@@ -189,6 +240,57 @@ export default async function handler(req, res, next) {
                 const lists = await getLists(trello, req.query.boardId);
 
                 res.status(200).json(lists);
+                break;
+            }
+
+            case 'repos': {
+                const result = await github.activity.getWatchedRepos({
+                    // If they have more than 100 then this will need to be
+                    // revisited
+                    'per_page': 100
+                });
+
+                res.status(200).json(result);
+                break;
+            }
+
+            case 'cards': {
+                const boardId = req.query.boardId;
+                const cards = await getAllCards(trello, boardId);
+
+                res.status(200).json(cards);
+                break;
+            }
+
+            case 'markdown': {
+                const [card, actions] = await Promise.all([
+                    getCard(trello, req.query.cardId),
+                    getCardActions(trello, req.query.cardId)
+                ]);
+
+                const markdown = [createNoteBodyFromTrelloCard(card, { excludeTitle: true }), transcriptFromActions(actions)].join('\n');
+
+                res.status(200).json({
+                    markdown
+                });
+                break;
+            }
+
+            case 'createIssue': {
+                const [card, actions] = await Promise.all([
+                    getCard(trello, req.body.cardId),
+                    getCardActions(trello, req.body.cardId)
+                ]);
+                const markdown = [createNoteBodyFromTrelloCard(card, { excludeTitle: true }), transcriptFromActions(actions)].join('\n');
+
+                const result = await github.issues.create({
+                    owner: req.body.owner,
+                    repo: req.body.name,
+                    title: card.name,
+                    body: markdown
+                });
+
+                res.status(200).json(result);
                 break;
             }
 

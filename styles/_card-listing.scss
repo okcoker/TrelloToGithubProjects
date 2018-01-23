@@ -1,0 +1,18 @@
+.card-listing {
+    list-style: none;
+    background: #fff;
+    padding: 10px;
+    margin-bottom: 1em;
+
+    &__desc {
+        word-wrap: break-word;
+    }
+
+    button {
+        margin-right: 1em;
+    }
+
+    &__expand {
+        float: right;
+    }
+}
