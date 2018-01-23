@@ -64,7 +64,7 @@ export default class Auth extends Component {
                         />
                     </label>
                     <label>
-                        Trello Secret
+                        Trello Token
                         <input
                             type="text"
                             name="trelloSecret"
