@@ -45,7 +45,8 @@ module.exports = {
 
         config.plugins.push(new webpack.DefinePlugin({
             'process.env': {
-                SITE_URL: JSON.stringify(process.env.SITE_URL)
+                SITE_URL: JSON.stringify(process.env.SITE_URL),
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
             }
         }));
 

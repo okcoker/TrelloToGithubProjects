@@ -86,7 +86,8 @@ class Index extends Component {
     setStorageKeys(cookieKeys = {}) {
         Object.keys(cookieKeys).forEach((key) => {
             Cookie.set(key, cookieKeys[key], {
-                path: '/'
+                path: '/',
+                secure: process.env.NODE_ENV === 'production'
             });
         });
 
