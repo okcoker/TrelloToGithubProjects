@@ -338,7 +338,9 @@ export default async function handler(req, res, next) {
                     return obj;
                 }, {});
                 const listIdToCardsMap = cards.reduce((lists, card) => {
-                    lists[card.idList].push(card);
+                    if (typeof lists[card.idList] !== 'undefined') {
+                        lists[card.idList].push(card);
+                    }
                     return lists;
                 }, emptyListObj);
                 const mergedLists = getProjectInfo(listInfo, listIdToCardsMap);
