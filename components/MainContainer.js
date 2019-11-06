@@ -63,10 +63,17 @@ class MainContainer extends Component {
                 dispatch(getLists(value));
                 break;
 
-            case 'organization':
+            case 'organization': {
+                // Retrieve organization
+                const organization = github.organizations.find(
+                    (item) => item.id === parseInt(value, 10)
+                );
+
+                // Set ID and refresh projects
                 dispatch(setOrganizationId(value));
-                dispatch(getProjects(value));
+                dispatch(getProjects(organization.login));
                 break;
+            }
 
             case 'project': {
                 if (value === 'add') {
@@ -365,8 +372,8 @@ class MainContainer extends Component {
             value: github.currentOrganizationId.toString(),
             onChange: this.handleSelectChange,
             disabled: github.isOrganizationLoading,
-            options: github.organizations.map(({ login }) => {
-                return { text: login, value: login };
+            options: github.organizations.map(({ login, id }) => {
+                return { text: login, value: id };
             })
         };
 
