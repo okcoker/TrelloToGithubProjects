@@ -124,6 +124,10 @@ ${checkboxes}
 
     const parts = [attachments, checklists];
 
+    if (card.desc) {
+        parts.unshift(card.desc);
+    }
+
     if (!excludeTitle) {
         parts.unshift(card.name);
     }
